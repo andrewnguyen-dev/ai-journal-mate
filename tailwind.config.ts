@@ -25,7 +25,7 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#9c2135", // WSU color
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -52,6 +52,19 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        // WSU Colors
+        wsu: {
+          100: "#ebd3d7",
+          200: "#d7a6ae",
+          300: "#c47a86",
+          400: "#b04d5d",
+          500: "#9c2135",
+          600: "#7d1a2a",
+          700: "#5e1420",
+          800: "#3e0d15",
+          900: "#1f070b"
+},
       },
       borderRadius: {
         lg: "var(--radius)",
