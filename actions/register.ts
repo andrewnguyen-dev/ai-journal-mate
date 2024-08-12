@@ -3,11 +3,17 @@
 import bcrypt from 'bcrypt'
 import prisma from '@/lib/prisma'
 import { getUserByEmail } from '@/data/user'
+import { RegisterSchema } from '@/schemas'
 
 export const register = async (values: any) => {
-  // TODO: Validate inputs
+  const validatedFields = RegisterSchema.safeParse(values);
 
-  const { name, email, password } = values
+  if (!validatedFields.success) {
+    return { error: "Invalid fields" };
+  }
+
+  const { email, password } = validatedFields.data;
+
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const existingUser = await getUserByEmail(email)
@@ -18,7 +24,6 @@ export const register = async (values: any) => {
 
   await prisma.user.create({
     data: {
-      name,
       email,
       password: hashedPassword,
     },
