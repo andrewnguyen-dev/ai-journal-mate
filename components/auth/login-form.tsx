@@ -45,9 +45,7 @@ export const LoginForm = () => {
         })
     })
   };
-
-  // TODO 2: error message
-
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">

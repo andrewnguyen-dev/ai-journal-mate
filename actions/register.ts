@@ -1,9 +1,11 @@
-'use server'
+"use server";
 
-import bcrypt from 'bcrypt'
-import prisma from '@/lib/prisma'
-import { getUserByEmail } from '@/data/user'
-import { RegisterSchema } from '@/schemas'
+import bcrypt from "bcrypt";
+import prisma from "@/lib/prisma";
+import { getUserByEmail } from "@/data/user";
+import { RegisterSchema } from "@/schemas";
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const register = async (values: any) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -14,12 +16,12 @@ export const register = async (values: any) => {
 
   const { email, password } = validatedFields.data;
 
-  const hashedPassword = await bcrypt.hash(password, 10)
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  const existingUser = await getUserByEmail(email)
+  const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
-    return { error: 'Email already exists' } // For security reason, should we say that the email is invalid instead?
+    return { error: "Email already exists" }; // For security reason, should we say that the email is invalid instead?
   }
 
   await prisma.user.create({
@@ -27,9 +29,11 @@ export const register = async (values: any) => {
       email,
       password: hashedPassword,
     },
-  })
+  });
 
-  // TODO: Send confirmation email
+  const verificationToken = await generateVerificationToken(email);
 
-  return { success: 'User created' }
-}
+  await sendVerificationEmail(verificationToken.email, verificationToken.token);
+
+  return { success: "Confirmation email sent" };
+};

@@ -10,7 +10,6 @@ import { UserRole } from "@prisma/client";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
-    /*
     async signIn({ user }) {
       if(!user.id) {
         return false;
@@ -18,13 +17,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const existingUser = await getUserById(user.id);
 
+      // Prevent user from signing in if the user is not verified
       if (!existingUser || !existingUser.emailVerified) {
         return false;
       }
 
+      // TODO: Add 2FA CHeck
+
       return true;
     },
-    */
+    
 
     async session ({ session, token }) {
       console.log("sessionToken", token);
