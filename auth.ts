@@ -1,12 +1,11 @@
-import NextAuth from "next-auth";
+import NextAuth from 'next-auth';
 
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import prisma from "@/lib/prisma"
-import authConfig from "./auth.config";
-import { getUserById } from "@/data/user";
-import { UserRole } from "@prisma/client";
+import { getUserById } from '@/data/user';
+import prisma from '@/lib/prisma';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { UserRole } from '@prisma/client';
 
-
+import authConfig from './auth.config';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
@@ -22,11 +21,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return false;
       }
 
-      // TODO: Add 2FA CHeck
+      // TODO: Add 2FA Check
 
       return true;
     },
-    
 
     async session ({ session, token }) {
       console.log("sessionToken", token);
