@@ -6,6 +6,7 @@ html,
 body,
 :root {
   height: 100%;
+  background-color: #f8fafc;
 }
 
 @layer base {
@@ -72,6 +73,18 @@ body,
   body {
     @apply bg-background text-foreground;
   }
+}
+
+h1 {
+  @apply sm:text-3xl text-2xl font-bold;
+}
+
+h2 {
+  @apply sm:text-2xl text-xl font-bold;
+}
+
+h3 {
+  @apply sm:text-xl text-lg font-semibold;
 }
 
 .auth-card-wrapper {

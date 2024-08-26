@@ -1,8 +1,16 @@
-const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
+import TopNavbar from "@/components/navs/top-navbar";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+
+const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth();
   return (
-    <div className="mt-16 p-8 bg-slate-50">
-      {children}
-    </div>
+    <SessionProvider session={session}>
+      <div className="sm:p-12 p-6 sm:pt-24 pt-24">
+        <TopNavbar />
+        {children}
+      </div>
+    </SessionProvider>
   );
 };
 

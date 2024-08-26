@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import TopNavbar from "@/components/navs/top-navbar";
 import SemesterProgress from "@/components/semester-progress";
 
 const Homepage = async () => {
@@ -7,10 +6,9 @@ const Homepage = async () => {
 
   return (
     <div>
-      <TopNavbar />
       <main className="grid grid-cols-3 gap-6">
         <section className="col-span-2">
-          <h1>Andrew Nguyen</h1>
+          <h1>Welcome back, {session?.user.name}!</h1>
         </section>
         <aside className="col-span-1">
           <SemesterProgress />

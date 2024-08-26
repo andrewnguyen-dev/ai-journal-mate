@@ -1,8 +1,5 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/fvXy2y9gO1w
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
+"use client";
+
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -14,30 +11,36 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import { JSX, SVGProps } from "react";
 import Image from "next/image";
-import { signOut } from "@/auth";
 import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { logout } from "@/actions/logout";
 
 const navItems = [
-  { name: "Home", href: "#" },
-  { name: "Progress Diary", href: "#" },
-  { name: "Reflection Report", href: "#" },
+  { name: "Home", href: "/" },
+  { name: "Progress Diary", href: "/diary" },
+  { name: "Reflection Report", href: "/reflection" },
 ];
 
-export default async function TopNavbar() {
+export default function TopNavbar() {
+  const pathname = usePathname();
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
     <header className="fixed left-0 top-0 z-50 w-full bg-primary shadow">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center">
           <Image src="/wsu_logo.png" width={40} height={40} alt="Logo" />
         </Link>
-        <nav className="hidden items-center gap-6 lg:flex">
+        <nav className="hidden items-center gap-6 md:flex">
           {navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="font-medium text-gray-50/80 transition-all hover:text-gray-50"
+              className={`font-medium text-gray-50/80 transition-all hover:text-gray-50 ${pathname === item.href ? "text-white" : ""}`}
             >
               {item.name}
             </Link>
@@ -45,11 +48,11 @@ export default async function TopNavbar() {
         </nav>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="flex cursor-pointer items-center gap-2 pl-4 hover:bg-white/10 rounded-3xl">
+            <div className="flex cursor-pointer items-center gap-2 rounded-3xl pl-4 hover:bg-white/10">
               <span className="text-sm text-gray-50">22023226</span>
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>AN</AvatarFallback>
               </Avatar>
             </div>
           </DropdownMenuTrigger>
@@ -70,23 +73,14 @@ export default async function TopNavbar() {
             <DropdownMenuItem>
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4" />
-                <form
-                  action={async () => {
-                    "use server";
-                    await signOut({
-                      redirectTo: "/auth/login",
-                    });
-                  }}
-                >
-                  <button type="submit">Logout</button>
-                </form>
+                <button onClick={handleLogout}>Logout</button>
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <Sheet>
           <SheetTrigger asChild>
-            <Button size="icon" className="lg:hidden">
+            <Button size="icon" className="md:hidden">
               <Menu color="white" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
@@ -97,26 +91,17 @@ export default async function TopNavbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex items-center gap-2 text-lg font-medium text-gray-50/80 transition-all hover:text-gray-50"
+                  className={`flex items-center gap-2 text-lg font-medium text-gray-50/80 transition-all hover:text-gray-50 ${pathname === item.href ? "text-white" : ""}`}
                 >
                   {item.name}
                 </Link>
               ))}
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({
-                    redirectTo: '/auth/login',
-                  });
-                }}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-lg font-medium text-gray-50/80 transition-all hover:text-gray-50"
               >
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 text-lg font-medium text-gray-50/80 transition-all hover:text-gray-50"
-                >
-                  Logout
-                </button>
-              </form>
+                Logout
+              </button>
             </div>
           </SheetContent>
         </Sheet>

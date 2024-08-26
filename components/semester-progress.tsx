@@ -1,17 +1,20 @@
 "use client";
 
+import { useCurrentWeek } from "@/hooks/use-current-week";
+
 type StepProps = {
   stepNumber: number;
   title: string;
   description: string;
   isLast: boolean;
+  currentStep: number;
 };
 
-const Step = ({ stepNumber, title, description, isLast }: StepProps) => {
+const Step = ({ stepNumber, title, description, isLast, currentStep }: StepProps) => {
   return (
     <div className="relative flex items-start gap-4">
       <div className="relative flex flex-col items-center">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <div className={`flex h-10 w-10 items-center justify-center rounded-full text-primary-foreground ${currentStep >= stepNumber ? 'bg-primary' : 'bg-wsu-200'}`}>
           {stepNumber}
         </div>
         {!isLast && (
@@ -50,6 +53,8 @@ const SemesterProgress = () => {
     },
   ];
 
+  const currentStep = useCurrentWeek();
+
   return (
     <div className="w-full max-w-md bg-white p-6 pl-12 rounded-lg">
       <div className="space-y-4">
@@ -65,6 +70,7 @@ const SemesterProgress = () => {
                 title={step.title}
                 description={step.description}
                 isLast={index === steps.length - 1}
+                currentStep={currentStep}
               />
             ))}
           </div>
