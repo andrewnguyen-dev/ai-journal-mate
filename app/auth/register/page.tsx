@@ -14,19 +14,6 @@ export default function Register() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault()
-
-    const values = { name, email, password }
-
-    startTransition(() => {
-      register(values)
-        .then((res) => {
-          console.log(res)
-        })
-    })
-  }
-
   return (
     <div className="auth-card-wrapper">
       <RegisterForm /> 

@@ -1,0 +1,1 @@
+export const semesterId = '2024S'; // 2024 Spring

@@ -27,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async session ({ session, token }) {
-      console.log("🔰 (/auth.ts) sessionToken", token);
+      // console.log("🔰 (/auth.ts) sessionToken", token);
 
       if (token.sub && session.user) {
         session.user.id = token.sub;
@@ -35,6 +35,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (token.role && session.user) {
         session.user.role = token.role as UserRole;
+      }
+
+      if (token.studentId && session.user) {
+        session.user.studentId = token.studentId as String;
       }
 
       return session;
@@ -52,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       token.role = existingUser.role;
+      token.studentId = existingUser.studentId;
 
       return token;
     }

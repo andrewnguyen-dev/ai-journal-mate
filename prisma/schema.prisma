@@ -40,6 +40,7 @@ model User {
   emailVerified DateTime?
   role          UserRole  @default(STUDENT)
   lastLogin     DateTime?
+  semesterId    String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -88,15 +89,6 @@ model PasswordResetToken {
   @@unique([email, token])
 }
 
-model Semester {
-  id        String   @id
-  startDate DateTime
-  endDate   DateTime
-  isActive  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Week {
   id          String   @id
   title       String
@@ -122,14 +114,19 @@ model Question {
 }
 
 model Conversation {
-  id         String           @id
-  grade      Float?
-  summary    String?
-  feedback   String?
-  markedDate DateTime?
-  type       ConversationType
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  id          String           @id @default(cuid())
+  grade       Float?
+  summary     String?
+  feedback    String?
+  markedDate  DateTime?
+  type        ConversationType
+  isDraft     Boolean          @default(true)
+  semesterId  String
+  openDate    DateTime? // Open and Close dates for each student diary, last for 1 week
+  closeDate   DateTime?
+  submittedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   // Relations
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)

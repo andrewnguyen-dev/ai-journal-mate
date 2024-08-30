@@ -9,6 +9,7 @@ import { AuthError } from "next-auth";
 import { getUserByEmail } from "@/data/user";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
+import prisma from "@/lib/prisma";
 
 export const login = async (values: any) => {
   const validatedFields = LoginSchema.safeParse(values);
@@ -35,11 +36,21 @@ export const login = async (values: any) => {
   }
 
   try {
+    await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        lastLogin: new Date(),
+      },
+    });
+    
     await signIn("credentials", {
       email,
       password,
       redirectTo: DEFAULT_LOGIN_REDIRECT,
     });
+
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
