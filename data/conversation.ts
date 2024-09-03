@@ -19,17 +19,18 @@ export const getConversationsByUserId = async (userId: string) => {
   }
 };
 
-export const createConversation = async (userId: string, weekId: string) => {
+export const getConversationById = async (conversationId: string) => {
   try {
-    const newConversation = await prisma.conversation.create({
-      data: {
-        userId,
-        weekId,
-        type: 'DIARY',
-        semesterId
+    const conversation = await prisma.conversation.findUnique({
+      where: {
+        id: conversationId,
       },
+      // include: {
+      //   messages: true,
+      // },
     });
-    return newConversation;
+
+    return conversation;
   } catch (error) {
     console.error(error);
     return null;
@@ -50,6 +51,23 @@ export const getConversationIdByUserIdAndWeekId = async (
       },
     });
     return conversation?.id;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const createConversation = async (userId: string, weekId: string) => {
+  try {
+    const newConversation = await prisma.conversation.create({
+      data: {
+        userId,
+        weekId,
+        type: 'DIARY',
+        semesterId,
+      },
+    });
+    return newConversation;
   } catch (error) {
     console.error(error);
     return null;

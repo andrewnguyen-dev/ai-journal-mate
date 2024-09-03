@@ -53,7 +53,9 @@ const SemesterProgress = () => {
     },
   ];
 
-  const currentStep = useCurrentWeek();
+  const currentWeek = useCurrentWeek();
+  if (!currentWeek) return null;
+  const currentStep = parseInt(currentWeek?.id);
 
   return (
     <div className="w-full max-w-md bg-white p-6 pl-12 rounded-lg">

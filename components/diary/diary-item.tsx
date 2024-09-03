@@ -1,35 +1,11 @@
 "use client";
 
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
 import { Plus, Check } from "lucide-react";
-import { createConversation, getConversationIdByUserIdAndWeekId } from '@/data/conversation';
-import { getConversationIdByUserIdAndWeekIdAction } from '@/actions/get-conversation-id';
-
-const handleClick = async ({ userId, weekId }: { userId: string, weekId: string }) => {
-  try {
-    const conversationId = await getConversationIdByUserIdAndWeekIdAction(userId, weekId);
-    if (conversationId) {
-      console.log("🚀 ~ handleClick ~ conversationId:", conversationId);
-      redirect(`/diary/${conversationId}`); // 🔴 Error here
-      return;
-    }
-  } catch (error) {
-    console.error(error);
-    return;
-  }
-
-  // const conversationId = await getConversationIdByUserIdAndWeekId(userId, weekId);
-  // if (conversationId) {
-  //   redirect(`/diary/${conversationId}`);
-  // } else {
-  //   const newConversation = await createConversation(userId, weekId);
-  //   if (!newConversation) {
-  //     throw new Error("Failed to create conversation");
-  //   }
-  //   redirect(`/diary/${newConversation.id}`);
-  // }
-};
+import { getConversationIdByUserIdAndWeekIdAction } from '@/actions/conversation';
+import { createConversationAction } from '@/actions/conversation';
+import toast from 'react-hot-toast';
 
 export const DiaryItem = ({
   weekId,
@@ -44,6 +20,27 @@ export const DiaryItem = ({
   description: string;
   grade: number | null;
 }) => {
+  const router = useRouter()
+
+  const handleClick = async ({ userId, weekId }: { userId: string, weekId: string }) => {
+    try {
+      const conversationId = await getConversationIdByUserIdAndWeekIdAction(userId, weekId);
+      if (conversationId) {
+        router.push(`/diary/${conversationId}`);
+      } else {
+        const newConversation = await createConversationAction(userId, weekId);
+        if (!newConversation) {
+          toast.error("Failed to create conversation");
+          return null;
+        }
+        router.push(`/diary/${newConversation.id}`);
+      }
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  };
+  
   return (
     <div className="flex flex-row justify-between items-center rounded-lg bg-white p-3 transition-all hover:shadow-sm">
       <p className="text-slate-800">

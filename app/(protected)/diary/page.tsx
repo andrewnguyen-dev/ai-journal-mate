@@ -5,10 +5,11 @@ import { currentUser } from "@/lib/auth";
 
 const Diary = async () => {
   const weeksData = await getAllWeeks();
-  const user = await currentUser();
   if (!weeksData) {
     return <div className="w-full text-center">Failed to load week data</div>;
   }
+  
+  const user = await currentUser();
   if (!user || !user.id) {
     return <div className="w-full text-center">Failed to load user data</div>;
   }
