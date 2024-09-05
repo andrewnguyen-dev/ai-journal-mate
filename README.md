@@ -1,20 +1,31 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/yourprojectname.git
+cd yourprojectname
+```
+
+2. Install dependencies:
+
+If you are using npm:
+
+```bash
+npm install
+```
+
+## Environment Variables
+Create a .env and .env.local file in the root directory of the project and add the variables (contact Andrew for this).
+
+## Database Setup
+Since the database is shared, the schema and data are already in place. (I'm not sure about this)
+
+## Running the Project
+Once you have everything set up, you can run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Then create `.env`, `.env.local` and add some secret key.
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
