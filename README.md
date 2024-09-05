@@ -3,8 +3,8 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/yourprojectname.git
-cd yourprojectname
+git clone https://github.com/andrewnguyen-dev/ai-journal-mate.git
+cd ai-journal-mate
 ```
 
 2. Install dependencies:
