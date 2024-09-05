@@ -1,10 +1,12 @@
 import { NewPasswordForm } from '@/components/auth/new-password-form'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const NewPassword = () => {
   return (
     <div className="auth-card-wrapper">
-      <NewPasswordForm /> 
+      <Suspense>
+        <NewPasswordForm /> 
+      </Suspense>
     </div>
   )
 }

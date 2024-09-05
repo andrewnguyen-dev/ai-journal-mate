@@ -1,9 +1,12 @@
 import NewVerificationForm from "@/components/auth/new-verification-form";
+import { Suspense } from "react";
 
 const NewVerification = () => {
   return (
     <div className="auth-card-wrapper">
-      <NewVerificationForm />
+      <Suspense>
+        <NewVerificationForm />
+      </Suspense>
     </div>
   );
 };
