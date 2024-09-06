@@ -2,18 +2,18 @@
 
 - Clone the repository:
 
-```bash
-git clone https://github.com/andrewnguyen-dev/ai-journal-mate.git
-cd ai-journal-mate
-```
+  ```bash
+  git clone https://github.com/andrewnguyen-dev/ai-journal-mate.git
+  cd ai-journal-mate
+  ```
 
 - Install dependencies:
 
-If you are using npm:
-
-```bash
-npm install
-```
+  If you are using npm:
+  
+  ```bash
+  npm install
+  ```
 
 ## Environment Variables
 Create a .env and .env.local file in the root directory of the project and add the variables (contact Andrew for this).
