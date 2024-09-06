@@ -21,6 +21,11 @@ Create a .env and .env.local file in the root directory of the project and add t
 ## Database Setup
 Since the database is shared, the schema and data are already in place. (I'm not sure about this)
 
+If you want to inspect the database:
+```bash
+npx prisma studio
+```
+
 ## Running the Project
 Once you have everything set up, you can run the development server:
 
