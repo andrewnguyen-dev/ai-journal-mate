@@ -1,13 +1,13 @@
 ## Getting Started
 
-1. Clone the repository:
+- Clone the repository:
 
 ```bash
 git clone https://github.com/andrewnguyen-dev/ai-journal-mate.git
 cd ai-journal-mate
 ```
 
-2. Install dependencies:
+- Install dependencies:
 
 If you are using npm:
 
