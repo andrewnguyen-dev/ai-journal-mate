@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Toaster
-          position="bottom-left"
+          position="bottom-center"
           toastOptions={{
             style: {
               padding: "12px",

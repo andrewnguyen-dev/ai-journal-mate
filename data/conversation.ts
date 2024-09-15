@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { semesterId } from "@/lib/constants";
+import { SenderRole } from "@prisma/client";
+import { Message } from "ai";
 
 export const getConversationsByUserId = async (userId: string) => {
   try {
@@ -46,8 +48,8 @@ export const getConversationIdByUserIdAndWeekId = async (
       where: {
         userId,
         weekId,
-        type: 'DIARY',
-        semesterId
+        type: "DIARY",
+        semesterId,
       },
     });
     return conversation?.id;
@@ -63,11 +65,85 @@ export const createConversation = async (userId: string, weekId: string) => {
       data: {
         userId,
         weekId,
-        type: 'DIARY',
+        type: "DIARY",
         semesterId,
       },
     });
     return newConversation;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const saveDraft = async (
+  conversationId: string,
+  messages: Message[],
+) => {
+  try {
+    const transformedMessages = messages
+    .filter((message) => !message.id.includes('default-system-message')) // Exclude messages with 'default-system-message' in the id
+    .map((message) => ({
+      id: message.id,
+      messageText: message.content,
+      sender: message.role as SenderRole,
+      createdAt: message.createdAt,
+      conversationId: conversationId,
+    }));
+
+    const savedDraft = await prisma.message.createMany({
+      data: transformedMessages,
+    });
+    return savedDraft;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const deleteConversationMessages = async (conversationId: string) => {
+  try {
+    const deletedMessages = await prisma.message.deleteMany({
+      where: {
+        conversationId: conversationId,
+      },
+    });
+    return deletedMessages;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const getMessagesByConversationId = async (conversationId: string) => {
+  try {
+    const messages = await prisma.message.findMany({
+      where: {
+        conversationId: conversationId,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+    return messages;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const submitDiary = async (conversationId: string) => {
+  try {
+    const submittedDiary = await prisma.conversation.update({
+      where: {
+        id: conversationId,
+      },
+      data: {
+        submittedAt: new Date(),
+        isDraft: false,
+      },
+    });
+    return submittedDiary;
   } catch (error) {
     console.error(error);
     return null;

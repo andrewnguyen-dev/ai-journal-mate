@@ -24,10 +24,13 @@ enum ConversationType {
   REFLECTION_REPORT
 }
 
-enum SenderType {
-  INITIAL_QUESTION
-  USER
-  BOT
+enum SenderRole {
+  function
+  system
+  user
+  assistant
+  data
+  tool
 }
 
 model User {
@@ -142,9 +145,9 @@ model Conversation {
 }
 
 model Message {
-  id          String     @id @default(cuid())
+  id          String     @id
   messageText String
-  sender      SenderType
+  sender      SenderRole
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 

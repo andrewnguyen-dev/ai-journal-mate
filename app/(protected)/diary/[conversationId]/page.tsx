@@ -1,5 +1,5 @@
 
-import { getConversationById } from "@/data/conversation";
+import { getConversationById, getMessagesByConversationId } from "@/data/conversation";
 import { getAllWeeks } from "@/data/week";
 import TopBar from "@/components/diary/top-bar";
 import MainChatSection from "@/components/diary/main-chat-section";
@@ -26,10 +26,13 @@ const Conversation = async ({ params }: { params: { conversationId: string }; })
     return <div className="w-full text-center">Failed to load questions</div>;
   }
 
+  const draftMessages = await getMessagesByConversationId(params.conversationId);
+  console.log("🚀 ~ Conversation ~ draftMessages:", draftMessages)
+
   return (
     <>
       <TopBar conversationWeek={conversationWeek} />
-      <MainChatSection questions={questions} />
+      <MainChatSection conversationId={params.conversationId} questions={questions} draftMessages={draftMessages} />  
     </>
   );
 };
