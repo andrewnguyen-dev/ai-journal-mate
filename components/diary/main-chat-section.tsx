@@ -1,32 +1,31 @@
 "use client";
 
-import { defaultSystemMessage } from "@/lib/constants";
-import { Message, Question } from "@prisma/client";
-import { useChat } from "ai/react";
-import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { generateRandomId } from "@/lib/utils";
-import { ScrollArea } from "../ui/scroll-area";
+import { useChat } from 'ai/react';
+import { Forward } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
+    deleteConversationMessagesAction, saveDraftAction, submitDiaryAction, unsubmitDiaryAction
+} from '@/actions/conversation';
+import { defaultSystemMessage } from '@/lib/constants';
+import { generateRandomId } from '@/lib/utils';
+import { Message, Question } from '@prisma/client';
+
 import {
-  deleteConversationMessagesAction,
-  saveDraftAction,
-  submitDiaryAction,
-  unsubmitDiaryAction,
-} from "@/actions/conversation";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { Forward } from "lucide-react";
+    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+    AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
+} from '../ui/alert-dialog';
+import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
+
+interface MainChatSectionProps {
+  conversationId: string;
+  isDiarySubmitted: boolean;
+  questions: Question[];
+  draftMessages: Message[] | null;
+}
 
 // Generate a random ID for this instance of the component
 const randomId = generateRandomId();
@@ -48,12 +47,7 @@ const MainChatSection = ({
   isDiarySubmitted,
   questions,
   draftMessages,
-}: {
-  conversationId: string;
-  isDiarySubmitted: boolean;
-  questions: Question[];
-  draftMessages: Message[] | null;
-}) => {
+}: MainChatSectionProps) => {
   // Use the Vercel AI SDK chat hook
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
@@ -61,6 +55,18 @@ const MainChatSection = ({
 
   const [currentQuestion, setCurrentQuestion] = useState(1); // State to keep track of the current question number
   const router = useRouter(); // Next.js router for navigation
+
+  // Transform draft messages to the format expected by the chat, memoized for performance
+  const transformedMessages = useMemo(() => {
+    if (!draftMessages || draftMessages.length === 0) return [];
+  
+    return draftMessages.map((message) => ({
+      id: message.id,
+      content: message.messageText,
+      role: message.sender,
+      createdAt: message.createdAt,
+    }));
+  }, [draftMessages]);
 
   // Effect for initializing messages with system message
   useEffect(() => {
@@ -76,15 +82,7 @@ const MainChatSection = ({
 
   // Effect for handling draft messages and setting up initial question
   useEffect(() => {
-    if (draftMessages && draftMessages.length > 0) {
-      // Transform draft messages to the format expected by the chat
-      const transformedMessages = draftMessages.map((message) => ({
-        id: message.id,
-        content: message.messageText,
-        role: message.sender,
-        createdAt: message.createdAt,
-      }));
-
+    if (transformedMessages.length > 0) {
       // Add transformed messages to the chat
       setMessages((prevMessages) => [...prevMessages, ...transformedMessages]);
 
@@ -121,8 +119,8 @@ const MainChatSection = ({
         },
       ]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draftMessages, questions]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Handles progression to the next question
