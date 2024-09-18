@@ -32,7 +32,7 @@ const Conversation = async ({ params }: { params: { conversationId: string }; })
   return (
     <>
       <TopBar conversationWeek={conversationWeek} />
-      <MainChatSection conversationId={params.conversationId} questions={questions} draftMessages={draftMessages} />  
+      <MainChatSection conversationId={params.conversationId} isDiarySubmitted={!!conversation.submittedAt} questions={questions} draftMessages={draftMessages} />  
     </>
   );
 };

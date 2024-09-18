@@ -149,3 +149,21 @@ export const submitDiary = async (conversationId: string) => {
     return null;
   }
 };
+
+export const unsubmitDiary = async (conversationId: string) => {
+  try {
+    const unsubmittedDiary = await prisma.conversation.update({
+      where: {
+        id: conversationId,
+      },
+      data: {
+        submittedAt: null,
+        isDraft: true,
+      },
+    });
+    return unsubmittedDiary;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};

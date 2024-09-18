@@ -8,9 +8,21 @@ import { Button } from "../ui/button";
 import { generateRandomId } from "@/lib/utils";
 import { ScrollArea } from "../ui/scroll-area";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import {
   deleteConversationMessagesAction,
   saveDraftAction,
   submitDiaryAction,
+  unsubmitDiaryAction,
 } from "@/actions/conversation";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -27,23 +39,26 @@ const randomId = generateRandomId();
  *
  * @param {Object} props - Component props
  * @param {string} props.conversationId - Unique identifier for the current conversation
+ * @param {boolean} props.isDiarySubmitted - Flag indicating whether the diary has been submitted
  * @param {Question[]} props.questions - Array of questions to be asked
  * @param {Message[] | null} props.draftMessages - Previously saved draft messages, if any
  */
 const MainChatSection = ({
   conversationId,
+  isDiarySubmitted,
   questions,
   draftMessages,
 }: {
   conversationId: string;
+  isDiarySubmitted: boolean;
   questions: Question[];
   draftMessages: Message[] | null;
 }) => {
   // Use the Vercel AI SDK chat hook
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
-  useChat();
-  console.log("🚀 ~ messages:", messages)
-  
+    useChat();
+  console.log("🚀 ~ messages:", messages);
+
   const [currentQuestion, setCurrentQuestion] = useState(1); // State to keep track of the current question number
   const router = useRouter(); // Next.js router for navigation
 
@@ -106,7 +121,7 @@ const MainChatSection = ({
         },
       ]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftMessages, questions]);
 
   /**
@@ -171,6 +186,8 @@ const MainChatSection = ({
 
   const handleSubmitDiary = async () => {
     try {
+      await handleSaveDraft();
+      // TODO: Generate Summary
       await submitDiaryAction(conversationId);
       toast.success("Diary submitted successfully!");
       router.refresh();
@@ -180,49 +197,69 @@ const MainChatSection = ({
     }
   };
 
+  const handleUnsubmitDiary = async () => {
+    try {
+      await unsubmitDiaryAction(conversationId);
+      toast.success("Diary unsubmitted successfully!");
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to unsubmit diary!");
+    }
+  };
+
   return (
     <main className="grid grid-cols-6 space-x-4">
       {/* Main chat section */}
       <section className="order-2 col-span-6 pt-6 sm:order-1 sm:col-span-4">
         <div className="rounded-sm border border-gray-200 bg-white p-3">
-          <ScrollArea className="stretch relative mx-auto flex h-[70vh] w-full max-w-2xl flex-col py-12 pr-4 md:pr-6">
+          <div className="stretch relative mx-auto flex h-[70vh] w-full max-w-2xl flex-col">
             {/* Render chat messages */}
-            {messages.map((m) =>
-              m.role === "user" || m.role === "assistant" ? (
-                <div
-                  key={m.id}
-                  className={`mb-4 whitespace-pre-line ${
-                    m.role === "user" ? "text-right" : "text-left"
-                  }`}
-                >
+            <ScrollArea className="mb-24 mt-6 pr-4 md:pr-6">
+              {messages.map((m) =>
+                m.role === "user" || m.role === "assistant" ? (
                   <div
-                    className={`inline-block max-w-[80%] rounded-lg px-4 py-2 ${
-                      m.role === "user"
-                        ? "bg-wsu-600/90 text-white"
-                        : "bg-gray-200 text-gray-800"
+                    key={m.id}
+                    className={`mb-4 whitespace-pre-line ${
+                      m.role === "user" ? "text-right" : "text-left"
                     }`}
                   >
-                    {m.content}
+                    <div
+                      className={`inline-block max-w-[80%] rounded-lg px-4 py-2 ${
+                        m.role === "user"
+                          ? "bg-wsu-600/90 text-white"
+                          : "bg-gray-200 text-gray-800"
+                      }`}
+                    >
+                      {m.content}
+                    </div>
                   </div>
-                </div>
-              ) : null,
-            )}
+                ) : null,
+              )}
+            </ScrollArea>
+
             {/* User input form */}
             <form
               onSubmit={handleSubmit}
               className="absolute bottom-0 flex w-full gap-2 pr-4 md:pr-6"
             >
-              <input
-                className="w-full rounded border border-gray-300 p-2"
+              <textarea
+                className="h-24 w-full resize-none rounded border border-gray-300 p-2"
                 value={input}
                 placeholder="Your answer..."
                 onChange={handleInputChange}
+                disabled={isDiarySubmitted}
               />
-              <Button type="submit" variant="secondary" className="border border-gray-300">
+              <Button
+                type="submit"
+                variant="secondary"
+                className="h-24 border border-gray-300"
+                disabled={isDiarySubmitted}
+              >
                 Send
               </Button>
             </form>
-          </ScrollArea>
+          </div>
         </div>
       </section>
       {/* Sidebar section */}
@@ -244,20 +281,53 @@ const MainChatSection = ({
             {currentQuestion < questions.length && (
               <Button onClick={handleNextQuestion}>Next Question</Button>
             )}
-            <Button variant="outline" onClick={handleSaveDraft}>
-              Save Draft
-            </Button>
+            {!isDiarySubmitted && (
+              <Button variant="outline" onClick={handleSaveDraft}>
+                Save Draft
+              </Button>
+            )}
           </div>
           {/* Delete conversation button (for development purposes) */}
           <Button
             variant="destructive"
             onClick={handleDeleteConversationMessages}
           >
-            Delete Conversation in DB (for dev purpose only)
+            Delete Conversation in DB (dev only)
           </Button>
         </div>
         <div>
-          <Button className="group" onClick={handleSubmitDiary}>Submit Diary <Forward size={18} className="ml-2 group-hover:ml-3 transition-all"/></Button>
+          {!isDiarySubmitted && currentQuestion === questions.length && (
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Button className="group">
+                  Submit Diary{" "}
+                  <Forward
+                    size={18}
+                    className="ml-2 transition-all group-hover:ml-3"
+                  />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleSubmitDiary}>
+                    Submit
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {isDiarySubmitted && (
+            <Button className="group" onClick={handleUnsubmitDiary}>
+              Unsubmitted Diary (dev only)
+            </Button>
+          )}
         </div>
       </aside>
     </main>
