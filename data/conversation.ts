@@ -42,13 +42,14 @@ export const getConversationById = async (conversationId: string) => {
 export const getConversationIdByUserIdAndWeekId = async (
   userId: string,
   weekId: string,
+  type: 'DIARY' | 'REFLECTION_REPORT',
 ) => {
   try {
     const conversation = await prisma.conversation.findFirst({
       where: {
         userId,
         weekId,
-        type: "DIARY",
+        type,
         semesterId,
       },
     });
@@ -59,13 +60,13 @@ export const getConversationIdByUserIdAndWeekId = async (
   }
 };
 
-export const createConversation = async (userId: string, weekId: string) => {
+export const createConversation = async (userId: string, weekId: string, type: 'DIARY' | 'REFLECTION_REPORT') => {
   try {
     const newConversation = await prisma.conversation.create({
       data: {
         userId,
         weekId,
-        type: "DIARY",
+        type,
         semesterId,
       },
     });
@@ -132,7 +133,7 @@ export const getMessagesByConversationId = async (conversationId: string) => {
   }
 };
 
-export const submitDiary = async (conversationId: string) => {
+export const submitDiary = async (conversationId: string, summary: string) => {
   try {
     const submittedDiary = await prisma.conversation.update({
       where: {
@@ -141,6 +142,7 @@ export const submitDiary = async (conversationId: string) => {
       data: {
         submittedAt: new Date(),
         isDraft: false,
+        summary,
       },
     });
     return submittedDiary;
@@ -159,6 +161,7 @@ export const unsubmitDiary = async (conversationId: string) => {
       data: {
         submittedAt: null,
         isDraft: true,
+        summary: null,
       },
     });
     return unsubmittedDiary;

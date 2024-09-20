@@ -3,9 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
 import { Plus, Check } from "lucide-react";
-import { getConversationIdByUserIdAndWeekIdAction } from '@/actions/conversation';
-import { createConversationAction } from '@/actions/conversation';
-import toast from 'react-hot-toast';
+import { handleOpenConversation } from '@/lib/utils';
 
 export const DiaryItem = ({
   weekId,
@@ -23,21 +21,9 @@ export const DiaryItem = ({
   const router = useRouter()
 
   const handleClick = async ({ userId, weekId }: { userId: string, weekId: string }) => {
-    try {
-      const conversationId = await getConversationIdByUserIdAndWeekIdAction(userId, weekId);
-      if (conversationId) {
-        router.push(`/diary/${conversationId}`);
-      } else {
-        const newConversation = await createConversationAction(userId, weekId);
-        if (!newConversation) {
-          toast.error("Failed to create conversation");
-          return null;
-        }
-        router.push(`/diary/${newConversation.id}`);
-      }
-    } catch (error) {
-      console.error(error);
-      return;
+    const path = await handleOpenConversation({ userId, weekId, type: 'DIARY' });
+    if (path) {
+      router.push(path);
     }
   };
   

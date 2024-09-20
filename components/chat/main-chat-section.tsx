@@ -1,30 +1,41 @@
 "use client";
 
-import { useChat } from 'ai/react';
-import { Forward } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { useChat, useCompletion } from "ai/react";
+import { Forward } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 import {
-    deleteConversationMessagesAction, saveDraftAction, submitDiaryAction, unsubmitDiaryAction
-} from '@/actions/conversation';
-import { defaultSystemMessage } from '@/lib/constants';
-import { generateRandomId } from '@/lib/utils';
-import { Message, Question } from '@prisma/client';
+  deleteConversationMessagesAction,
+  saveDraftAction,
+  submitDiaryAction,
+  unsubmitDiaryAction,
+} from "@/actions/conversation";
+import { defaultSystemMessageForDiary, defaultSystemMessageForReflectionReport } from "@/lib/constants";
+import { generateRandomId } from "@/lib/utils";
+import { Message, Question } from "@prisma/client";
 
 import {
-    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
-    AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
-} from '../ui/alert-dialog';
-import { Button } from '../ui/button';
-import { ScrollArea } from '../ui/scroll-area';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface MainChatSectionProps {
   conversationId: string;
   isDiarySubmitted: boolean;
   questions: Question[];
   draftMessages: Message[] | null;
+  type: 'DIARY' | 'REFLECTION_REPORT'
 }
 
 // Generate a random ID for this instance of the component
@@ -47,6 +58,7 @@ const MainChatSection = ({
   isDiarySubmitted,
   questions,
   draftMessages,
+  type
 }: MainChatSectionProps) => {
   // Use the Vercel AI SDK chat hook
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
@@ -55,11 +67,13 @@ const MainChatSection = ({
 
   const [currentQuestion, setCurrentQuestion] = useState(1); // State to keep track of the current question number
   const router = useRouter(); // Next.js router for navigation
+  const messagesEndRef = useRef<HTMLDivElement | null>(null); // Ref for auto-scrolling to the last message
+  const defaultSystemMessage = type === 'DIARY' ? defaultSystemMessageForDiary : defaultSystemMessageForReflectionReport;
 
   // Transform draft messages to the format expected by the chat, memoized for performance
   const transformedMessages = useMemo(() => {
     if (!draftMessages || draftMessages.length === 0) return [];
-  
+
     return draftMessages.map((message) => ({
       id: message.id,
       content: message.messageText,
@@ -78,7 +92,7 @@ const MainChatSection = ({
         createdAt: new Date(),
       },
     ]);
-  }, [setMessages]);
+  }, [defaultSystemMessage, setMessages]);
 
   // Effect for handling draft messages and setting up initial question
   useEffect(() => {
@@ -119,8 +133,13 @@ const MainChatSection = ({
         },
       ]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Effect for scrolling to the last message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   /**
    * Handles progression to the next question
@@ -158,7 +177,7 @@ const MainChatSection = ({
       // Save the draft
       const savedDraft = await saveDraftAction(conversationId, newMessages);
       if (savedDraft) {
-        toast.success("Draft saved successfully!");
+        toast.success("Conversation messages saved successfully!");
       } else {
         toast.error("Failed to save draft!");
       }
@@ -182,11 +201,56 @@ const MainChatSection = ({
     }
   };
 
+  /**
+   * Generates a summary of the diary entries
+   * @returns {Promise<string|null>} The generated summary or null if an error occurs
+   */
+  const generateDiarySummary = async () => {
+    const joinedMessages = messages
+      .slice(1)
+      .map((m) => m.content)
+      .join("\n");
+
+    try {
+      const response = await fetch("/api/summarize-diary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: joinedMessages,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.text;
+    } catch (error) {
+      console.error("Error generating diary summary:", error);
+      return null;
+    }
+  };
+
+  /**
+   * Handles the submission of the diary
+   * Saves the draft, generates a summary, and submits the diary
+   */
   const handleSubmitDiary = async () => {
     try {
+      // Save conversation messages
       await handleSaveDraft();
-      // TODO: Generate Summary
-      await submitDiaryAction(conversationId);
+
+      const submittingToast = toast.loading("Submitting diary...");
+      // Call API to Vercel AI SDK to generate summary and insert it into DB
+      const summary = await generateDiarySummary();
+      if (summary) {
+        // Submit diary
+        await submitDiaryAction(conversationId, summary);
+      }
+      toast.dismiss(submittingToast);
       toast.success("Diary submitted successfully!");
       router.refresh();
     } catch (error) {
@@ -195,6 +259,9 @@ const MainChatSection = ({
     }
   };
 
+  /**
+   * Handles unsubmitting a previously submitted diary
+   */
   const handleUnsubmitDiary = async () => {
     try {
       await unsubmitDiaryAction(conversationId);
@@ -206,6 +273,9 @@ const MainChatSection = ({
     }
   };
 
+  /**
+   * Renders the main chat interface and sidebar
+   */
   return (
     <main className="grid grid-cols-6 space-x-4">
       {/* Main chat section */}
@@ -234,6 +304,7 @@ const MainChatSection = ({
                   </div>
                 ) : null,
               )}
+              <div ref={messagesEndRef} />
             </ScrollArea>
 
             {/* User input form */}
@@ -273,6 +344,10 @@ const MainChatSection = ({
                 {question.order}. {question.questionText}
               </div>
             ))}
+            <p className="text-[0.8rem] italic text-gray-700">
+              Students are advised to answer around 3 questions before clicking
+              the &apos;Next Question&apos; button.
+            </p>
           </div>
           {/* Action buttons */}
           <div className="flex flex-col gap-3 md:flex-row">
@@ -294,9 +369,10 @@ const MainChatSection = ({
           </Button>
         </div>
         <div>
+          {/* Submit diary button with confirmation dialog */}
           {!isDiarySubmitted && currentQuestion === questions.length && (
             <AlertDialog>
-              <AlertDialogTrigger>
+              <AlertDialogTrigger asChild>
                 <Button className="group">
                   Submit Diary{" "}
                   <Forward
@@ -321,6 +397,7 @@ const MainChatSection = ({
               </AlertDialogContent>
             </AlertDialog>
           )}
+          {/* Unsubmit diary button (for development purposes) */}
           {isDiarySubmitted && (
             <Button className="group" onClick={handleUnsubmitDiary}>
               Unsubmitted Diary (dev only)

@@ -3,13 +3,13 @@
 import { createConversation, deleteConversationMessages, getConversationIdByUserIdAndWeekId, saveDraft, submitDiary, unsubmitDiary } from "@/data/conversation";
 import { Message } from "ai";
 
-export const getConversationIdByUserIdAndWeekIdAction = async (userId: string, weekId: string) => {
-  const conversationId = await getConversationIdByUserIdAndWeekId(userId, weekId);
+export const getConversationIdByUserIdAndWeekIdAction = async (userId: string, weekId: string, type: 'DIARY' | 'REFLECTION_REPORT') => {
+  const conversationId = await getConversationIdByUserIdAndWeekId(userId, weekId, type);
   return conversationId;
 };
 
-export const createConversationAction = async (userId: string, weekId: string) => {
-  const newConversationId = await createConversation(userId, weekId);
+export const createConversationAction = async (userId: string, weekId: string, type: 'DIARY' | 'REFLECTION_REPORT') => {
+  const newConversationId = await createConversation(userId, weekId, type);
   return newConversationId;
 };
 
@@ -24,8 +24,8 @@ export const deleteConversationMessagesAction = async (conversationId: string) =
   return deletedConversation;
 };
 
-export const submitDiaryAction = async (conversationId: string) => {
-  const submittedDiary = await submitDiary(conversationId);
+export const submitDiaryAction = async (conversationId: string, summary: string) => {
+  const submittedDiary = await submitDiary(conversationId, summary);
   return submittedDiary;
 };
 

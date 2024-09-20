@@ -2,10 +2,11 @@ import {
   getConversationById,
   getMessagesByConversationId,
 } from "@/data/conversation";
-import { getAllWeeks } from "@/data/week";
-import TopBar from "@/components/diary/top-bar";
+import TopBar from "@/components/reflection/top-bar";
 import MainChatSection from "@/components/chat/main-chat-section";
 import { getQuestionsByWeekId } from "@/data/questions";
+
+const reflectionWeekId = "99";
 
 const Conversation = async ({
   params,
@@ -19,21 +20,7 @@ const Conversation = async ({
     );
   }
 
-  const weeksData = await getAllWeeks();
-  if (!weeksData) {
-    return <div className="w-full text-center">Failed to load week data</div>;
-  }
-
-  const conversationWeek = weeksData.find(
-    (week) => week.id === conversation.weekId,
-  );
-  if (!conversationWeek) {
-    return (
-      <div className="w-full text-center">Failed to find conversation week</div>
-    );
-  }
-
-  const questions = await getQuestionsByWeekId(conversationWeek.id);
+  const questions = await getQuestionsByWeekId(reflectionWeekId);
   if (!questions) {
     return <div className="w-full text-center">Failed to load questions</div>;
   }
@@ -44,13 +31,13 @@ const Conversation = async ({
 
   return (
     <>
-      <TopBar conversationWeek={conversationWeek} />
+      <TopBar />
       <MainChatSection
         conversationId={params.conversationId}
         isDiarySubmitted={!!conversation.submittedAt}
         questions={questions}
         draftMessages={draftMessages}
-        type="DIARY"
+        type="REFLECTION_REPORT"
       />
     </>
   );

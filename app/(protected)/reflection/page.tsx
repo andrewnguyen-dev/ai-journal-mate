@@ -1,18 +1,17 @@
-import { DiaryItem } from "@/components/diary/diary-item";
+import ReflectionItem from "@/components/reflection/reflection-item";
 import { getConversationsByUserId } from "@/data/conversation";
 import { getAllWeeks } from "@/data/week";
 import { currentUser } from "@/lib/auth";
 
-const Diary = async () => {
-  let weeksData = await getAllWeeks();
-  console.log("🚀 ~ Diary ~ weeksData:", weeksData)
+const reflectionWeekId = '99';
+
+const Reflection = async () => {
+
+  const weeksData = await getAllWeeks();
   if (!weeksData) {
     return <div className="w-full text-center">Failed to load week data</div>;
   }
-  weeksData.sort((a, b) => b.id.localeCompare(a.id)); // Sort the array by id in descending order
-  weeksData = weeksData.slice(1); // Remove the Reflection Report
-  weeksData.sort((a, b) => a.id.localeCompare(b.id)); // Restore the original order
-
+  
   const user = await currentUser();
   if (!user || !user.id) {
     return <div className="w-full text-center">Failed to load user data</div>;
@@ -39,26 +38,18 @@ const Diary = async () => {
     grade: gradeMap[week.id] || null, // Add grade or null if not found
   }));
 
+
   return (
     <div className="space-y-6">
       <section id="header" className="flex justify-between">
-        <h1>Diary</h1>
-        <span>Total Grade: 5/100%</span>
+        <h1>Reflection Report</h1>
+        <span>AbcXtyz</span>
       </section>
       <section className="space-y-4">
-        {userWeeksData.map((week) => (
-          <DiaryItem
-            key={week.id}
-            weekId={week.id}
-            userId={user.id as string}
-            title={week.title}
-            description={week.description}
-            grade={week.grade}
-          />
-        ))}
+        <ReflectionItem weekId={reflectionWeekId} userId={user.id as string} />
       </section>
     </div>
   );
 };
 
-export default Diary;
+export default Reflection;
