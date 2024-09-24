@@ -1,5 +1,6 @@
 import {
   getConversationById,
+  getConversationSummaries,
   getMessagesByConversationId,
 } from "@/data/conversation";
 import TopBar from "@/components/reflection/top-bar";
@@ -29,6 +30,9 @@ const Conversation = async ({
     params.conversationId,
   );
 
+  const conversationSummaries = await getConversationSummaries();
+  console.log("🚀 ~ conversationSummaries:", conversationSummaries)
+  
   return (
     <>
       <TopBar />
@@ -38,6 +42,7 @@ const Conversation = async ({
         questions={questions}
         draftMessages={draftMessages}
         type="REFLECTION_REPORT"
+        conversationSummaries={conversationSummaries}
       />
     </>
   );

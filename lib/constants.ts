@@ -18,3 +18,22 @@ export const defaultSystemMessageForReflectionReport = `
   personal growth, team collaboration, and challenges faced. Prompt meaningful 
   consideration while encouraging a formal, structured writing style typical of a report. 
   Remind them to include an introduction and conclusion to encapsulate their insights.`;
+
+export const navItemsStudent = [
+  { name: "Home", href: "/" },
+  { name: "Progress Diary", href: "/diary" },
+  { name: "Reflection Report", href: "/reflection" },
+];
+
+export const navItemsSupervisor = [
+  { name: "Home", href: "/" },
+  { name: "Progress Diary", href: "/supervisor/diary-marking" },
+  { name: "Reflection Report", href: "/supervisor/reflection-marking" },
+];
+
+export const navItemsAdmin = [
+  { name: "Home", href: "/" },
+  { name: "Progress Diary", href: "/diary" },
+  { name: "Reflection Report", href: "/reflection" },
+  { name: "Admin", href: "/admin" },
+];

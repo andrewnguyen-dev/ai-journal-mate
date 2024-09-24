@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat, useCompletion } from "ai/react";
-import { Forward } from "lucide-react";
+import { Forward, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -35,7 +35,8 @@ interface MainChatSectionProps {
   isDiarySubmitted: boolean;
   questions: Question[];
   draftMessages: Message[] | null;
-  type: 'DIARY' | 'REFLECTION_REPORT'
+  type: 'DIARY' | 'REFLECTION_REPORT';
+  conversationSummaries: string | null;
 }
 
 // Generate a random ID for this instance of the component
@@ -58,10 +59,11 @@ const MainChatSection = ({
   isDiarySubmitted,
   questions,
   draftMessages,
-  type
+  type,
+  conversationSummaries
 }: MainChatSectionProps) => {
   // Use the Vercel AI SDK chat hook
-  const { messages, input, handleInputChange, handleSubmit, setMessages } =
+  const { messages, input, handleInputChange, handleSubmit, setMessages, append } =
     useChat();
   console.log("🚀 ~ messages:", messages);
 
@@ -273,6 +275,17 @@ const MainChatSection = ({
     }
   };
 
+  const handleEvaluateReflection = async () => {
+    append({
+      id: `system-evaluate-message-${randomId}`,
+      role: "user",
+      content: `I just finished my Reflection Report. Please evaluate my work and provide feedback.
+      Use the summaries of the previous conversations below to guide your evaluation: ${conversationSummaries}
+      `,
+      createdAt: new Date(),
+    })
+  }
+
   /**
    * Renders the main chat interface and sidebar
    */
@@ -285,7 +298,7 @@ const MainChatSection = ({
             {/* Render chat messages */}
             <ScrollArea className="mb-24 mt-6 pr-4 md:pr-6">
               {messages.map((m) =>
-                m.role === "user" || m.role === "assistant" ? (
+                (m.role === "user" || m.role === "assistant") && !m.id.startsWith('system-evaluate-message') ? (
                   <div
                     key={m.id}
                     className={`mb-4 whitespace-pre-line ${
@@ -354,6 +367,11 @@ const MainChatSection = ({
             {currentQuestion < questions.length && (
               <Button onClick={handleNextQuestion}>Next Question</Button>
             )}
+            {currentQuestion === questions.length && type === 'REFLECTION_REPORT' && (
+              <Button onClick={handleEvaluateReflection}>
+                <Sparkles className="mr-2 h-4 w-4"/> Evaluate my Reflection
+              </Button>
+            )}
             {!isDiarySubmitted && (
               <Button variant="outline" onClick={handleSaveDraft}>
                 Save Draft
@@ -374,7 +392,7 @@ const MainChatSection = ({
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button className="group">
-                  Submit Diary{" "}
+                  Submit{" "}
                   <Forward
                     size={18}
                     className="ml-2 transition-all group-hover:ml-3"

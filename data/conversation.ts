@@ -170,3 +170,22 @@ export const unsubmitDiary = async (conversationId: string) => {
     return null;
   }
 };
+
+export const getConversationSummaries = async () => {
+  try {
+    const conversationSummaries = await prisma.conversation.findMany({
+      select: {
+        summary: true,
+      },
+    });
+
+    // Merge summaries into a single string
+    const mergedSummaries = conversationSummaries.map(convo => convo.summary).join('\n');
+
+    // Return the merged summaries
+    return mergedSummaries;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
