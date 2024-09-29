@@ -36,7 +36,7 @@ interface MainChatSectionProps {
   questions: Question[];
   draftMessages: Message[] | null;
   type: 'DIARY' | 'REFLECTION_REPORT';
-  conversationSummaries: string | null;
+  conversationSummaries?: string;
 }
 
 // Generate a random ID for this instance of the component
