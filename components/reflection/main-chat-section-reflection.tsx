@@ -63,7 +63,7 @@ const MainChatSection = ({
   conversationSummaries
 }: MainChatSectionProps) => {
   // Use the Vercel AI SDK chat hook
-  const { messages, input, handleInputChange, handleSubmit, setMessages, append } =
+  const { messages, input, setInput, handleInputChange, handleSubmit, setMessages, append } =
     useChat();
   console.log("🚀 ~ messages:", messages);
 
@@ -278,12 +278,34 @@ const MainChatSection = ({
   const handleEvaluateReflection = async () => {
     append({
       id: `system-evaluate-message-${randomId}`,
-      role: "user",
-      content: `I just finished my Reflection Report. Please evaluate my work and provide feedback.
+      role: "system",
+      content: `Based on the previous discusson....
+You're an insightful assistant guiding students in developing their reflective practice by evaluating previous diary entries, and comparing it to their answers to the following questions:
+
+- Your personal reflection and description of how the project went
+- What have you learned yb carrying out project activities
+- Things that you could have done differently to achieve a better outcome. 
+
+When comparing their diary entries against these questions identify possible gaps, and encourage the student to explore why they were not part of their answers to these three questions. 
       Use the summaries of the previous conversations below to guide your evaluation: ${conversationSummaries}
       `,
       createdAt: new Date(),
     })
+  }
+
+  const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        id: `user-message-${randomId}`,
+        role: "user",
+        content: input,
+        createdAt: new Date(),
+      },
+    ]);
+    setInput("");
+    handleNextQuestion();
   }
 
   /**
@@ -296,7 +318,7 @@ const MainChatSection = ({
         <div className="rounded-sm border border-gray-200 bg-white p-3">
           <div className="stretch relative mx-auto flex h-[70vh] w-full max-w-2xl flex-col">
             {/* Render chat messages */}
-            <ScrollArea className="mb-24 mt-6 pr-4 md:pr-6">
+            <ScrollArea className="mb-48 mt-6 pr-4 md:pr-6">
               {messages.map((m) =>
                 (m.role === "user" || m.role === "assistant") && !m.id.startsWith('system-evaluate-message') ? (
                   <div
@@ -322,25 +344,34 @@ const MainChatSection = ({
 
             {/* User input form */}
             <form
-              onSubmit={handleSubmit}
-              className="absolute bottom-0 flex w-full gap-2 pr-4 md:pr-6"
+              onSubmit={handleSend}
+              className="absolute bottom-0 flex w-full flex-col gap-2 pr-4 md:pr-6"
             >
               <textarea
-                className="h-24 w-full resize-none rounded border border-gray-300 p-2"
+                className="h-40 w-full resize-none rounded border border-gray-300 p-2"
                 value={input}
                 placeholder="Your answer..."
                 onChange={handleInputChange}
                 disabled={isDiarySubmitted}
               />
-              <Button
-                type="submit"
-                variant="secondary"
-                className="h-24 border border-gray-300"
-                disabled={isDiarySubmitted}
-              >
-                Send
-              </Button>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">
+                  {(() => {
+                    const wordCount = input.trim().split(/\s+/).filter(Boolean).length;
+                    return `${wordCount} ${wordCount <= 1 ? 'word' : 'words'}`;
+                  })()}
+                </span>
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  className="px-6 border border-gray-300"
+                  disabled={isDiarySubmitted}
+                >
+                  Send
+                </Button>
+              </div>
             </form>
+
           </div>
         </div>
       </section>
@@ -357,16 +388,12 @@ const MainChatSection = ({
                 {question.order}. {question.questionText}
               </div>
             ))}
-            <p className="text-[0.8rem] italic text-gray-700">
-              Students are advised to answer around 3 questions before clicking
-              the &apos;Next Question&apos; button.
-            </p>
           </div>
           {/* Action buttons */}
           <div className="flex flex-col gap-3 md:flex-row">
-            {currentQuestion < questions.length && (
+            {/* {currentQuestion < questions.length && (
               <Button onClick={handleNextQuestion}>Next Question</Button>
-            )}
+            )} */}
             {currentQuestion === questions.length && type === 'REFLECTION_REPORT' && (
               <Button onClick={handleEvaluateReflection}>
                 <Sparkles className="mr-2 h-4 w-4"/> Evaluate my Reflection

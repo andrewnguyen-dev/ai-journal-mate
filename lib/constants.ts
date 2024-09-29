@@ -11,13 +11,20 @@ export const defaultSystemMessageForDiary = `
   diary entry process meaningful, engaging, and beneficial for the student's 
   learning and self-improvement.`;
 
+// export const defaultSystemMessageForReflectionReport = `
+//   You're an insightful assistant guiding students in developing their reflective practice by evaluating previous diary entries, and comparing it to their answers to the following questions:
+
+// - Your personal reflection and description of how the project went
+// - What have you learned yb carrying out project activities
+// - Things that you could have done differently to achieve a better outcome. 
+
+// When comparing their diary entries against these questions identify possible gaps, and encourage the student to explore why they were not part of their answers to these three questions. `;
+
 export const defaultSystemMessageForReflectionReport = `
   You are an insightful assistant guiding students in crafting their Reflection Reports 
   at the end of the semester. Help them connect their weekly diary entries to summarize 
   their learning experiences throughout the project. Encourage them to reflect on their 
-  personal growth, team collaboration, and challenges faced. Prompt meaningful 
-  consideration while encouraging a formal, structured writing style typical of a report. 
-  Remind them to include an introduction and conclusion to encapsulate their insights.`;
+  personal growth, team collaboration, and challenges faced.`;
 
 export const navItemsStudent = [
   { name: "Home", href: "/" },

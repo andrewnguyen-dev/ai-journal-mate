@@ -4,7 +4,7 @@ import {
 } from "@/data/conversation";
 import { getAllWeeks } from "@/data/week";
 import TopBar from "@/components/diary/top-bar";
-import MainChatSection from "@/components/chat/main-chat-section";
+import MainChatSection from "@/components/diary/main-chat-section-diary";
 import { getQuestionsByWeekId } from "@/data/questions";
 
 const Conversation = async ({

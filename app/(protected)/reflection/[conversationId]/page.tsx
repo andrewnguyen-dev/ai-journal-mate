@@ -4,7 +4,7 @@ import {
   getMessagesByConversationId,
 } from "@/data/conversation";
 import TopBar from "@/components/reflection/top-bar";
-import MainChatSection from "@/components/chat/main-chat-section";
+import MainChatSection from "@/components/reflection/main-chat-section-reflection";
 import { getQuestionsByWeekId } from "@/data/questions";
 
 const reflectionWeekId = "99";
