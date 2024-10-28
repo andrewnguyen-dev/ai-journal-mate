@@ -1,6 +1,6 @@
 'use server'
 
-import { createConversation, deleteConversationMessages, getConversationIdByUserIdAndWeekId, saveDraft, submitDiary, unsubmitDiary } from "@/data/conversation";
+import { createConversation, deleteConversationMessages, getConversationIdByUserIdAndWeekId, saveDraft, submitDiary, submitMarking, unsubmitDiary } from "@/data/conversation";
 import { Message } from "ai";
 
 export const getConversationIdByUserIdAndWeekIdAction = async (userId: string, weekId: string, type: 'DIARY' | 'REFLECTION_REPORT') => {
@@ -32,4 +32,9 @@ export const submitDiaryAction = async (conversationId: string, summary: string)
 export const unsubmitDiaryAction = async (conversationId: string) => {
   const unsubmittedDiary = await unsubmitDiary(conversationId);
   return unsubmittedDiary;
+};
+
+export const submitMarkingAction = async (conversationId: string, feedback: string, grade: number) => {
+  const submittedMarking = await submitMarking(conversationId, feedback, grade);
+  return submittedMarking;
 };

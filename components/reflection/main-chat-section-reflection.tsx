@@ -29,6 +29,7 @@ import {
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
+import ChatMessages from "../chat/chat-messages";
 
 interface MainChatSectionProps {
   conversationId: string;
@@ -68,6 +69,7 @@ const MainChatSection = ({
   console.log("🚀 ~ messages:", messages);
 
   const [currentQuestion, setCurrentQuestion] = useState(1); // State to keep track of the current question number
+  const [isEvaluated, setIsEvaluated] = useState(false); // State to keep track of whether the reflection report has been evaluated
   const router = useRouter(); // Next.js router for navigation
   const messagesEndRef = useRef<HTMLDivElement | null>(null); // Ref for auto-scrolling to the last message
   const defaultSystemMessage = type === 'DIARY' ? defaultSystemMessageForDiary : defaultSystemMessageForReflectionReport;
@@ -291,21 +293,26 @@ When comparing their diary entries against these questions identify possible gap
       `,
       createdAt: new Date(),
     })
+    setIsEvaluated(true);
   }
 
   const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      {
-        id: `user-message-${randomId}`,
-        role: "user",
-        content: input,
-        createdAt: new Date(),
-      },
-    ]);
-    setInput("");
-    handleNextQuestion();
+    if (isEvaluated) {
+      handleSubmit();
+    } else {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: `user-message-${currentQuestion}-${randomId}`,
+          role: "user",
+          content: input,
+          createdAt: new Date(),
+        },
+      ]);
+      setInput("");
+      handleNextQuestion();
+    }
   }
 
   /**
@@ -316,31 +323,9 @@ When comparing their diary entries against these questions identify possible gap
       {/* Main chat section */}
       <section className="order-2 col-span-6 pt-6 sm:order-1 sm:col-span-4">
         <div className="rounded-sm border border-gray-200 bg-white p-3">
-          <div className="stretch relative mx-auto flex h-[70vh] w-full max-w-2xl flex-col">
+          <div className="stretch relative mx-auto flex h-[80vh] w-full max-w-2xl flex-col">
             {/* Render chat messages */}
-            <ScrollArea className="mb-48 mt-6 pr-4 md:pr-6">
-              {messages.map((m) =>
-                (m.role === "user" || m.role === "assistant") && !m.id.startsWith('system-evaluate-message') ? (
-                  <div
-                    key={m.id}
-                    className={`mb-4 whitespace-pre-line ${
-                      m.role === "user" ? "text-right" : "text-left"
-                    }`}
-                  >
-                    <div
-                      className={`inline-block max-w-[80%] rounded-lg px-4 py-2 ${
-                        m.role === "user"
-                          ? "bg-wsu-600/90 text-white"
-                          : "bg-gray-200 text-gray-800"
-                      }`}
-                    >
-                      {m.content}
-                    </div>
-                  </div>
-                ) : null,
-              )}
-              <div ref={messagesEndRef} />
-            </ScrollArea>
+            <ChatMessages messages={messages} className="mb-52" />
 
             {/* User input form */}
             <form

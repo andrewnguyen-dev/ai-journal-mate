@@ -1,5 +1,5 @@
 import ReflectionItem from "@/components/reflection/reflection-item";
-import { getConversationsByUserId } from "@/data/conversation";
+import { getDiariesByUserId } from "@/data/conversation";
 import { getAllWeeks } from "@/data/week";
 import { currentUser } from "@/lib/auth";
 
@@ -17,7 +17,7 @@ const Reflection = async () => {
     return <div className="w-full text-center">Failed to load user data</div>;
   }
 
-  const userConversations = await getConversationsByUserId(user.id);
+  const userConversations = await getDiariesByUserId(user.id);
 
   // Initialize gradeMap with null values for all weekIds (1 to 14)
   const gradeMap: { [weekId: string]: number | null } = {};

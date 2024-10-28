@@ -1,4 +1,4 @@
-export const semesterId = "2024S"; // 2024 Spring
+export const currentSemesterId = "2024S"; // 2024 Spring
 
 export const defaultSystemMessageForDiary = `
   You are a reflective and insightful assistant helping students document their 
@@ -34,13 +34,21 @@ export const navItemsStudent = [
 
 export const navItemsSupervisor = [
   { name: "Home", href: "/" },
-  { name: "Progress Diary", href: "/supervisor/diary-marking" },
-  { name: "Reflection Report", href: "/supervisor/reflection-marking" },
+  { name: "Marking", href: "/supervisor/marking" },
 ];
 
 export const navItemsAdmin = [
   { name: "Home", href: "/" },
-  { name: "Progress Diary", href: "/diary" },
-  { name: "Reflection Report", href: "/reflection" },
-  { name: "Admin", href: "/admin" },
+  { name: "Manage", href: "/admin/manage/supervisor-list" },
 ];
+
+export const adminSidebarNavItems = [
+  {
+    title: "Supervisor List",
+    href: "/admin/manage/supervisor-list",
+  },
+  {
+    title: "Student List",
+    href: "/admin/manage/student-list"
+  }
+]

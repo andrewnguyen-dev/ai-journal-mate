@@ -1,20 +1,39 @@
 import prisma from "@/lib/prisma";
-import { semesterId } from "@/lib/constants";
+import { currentSemesterId } from "@/lib/constants";
 import { SenderRole } from "@prisma/client";
 import { Message } from "ai";
 
-export const getConversationsByUserId = async (userId: string) => {
+export const getDiariesByUserId = async (userId: string) => {
   try {
-    const conversations = await prisma.conversation.findMany({
+    const diaries = await prisma.conversation.findMany({
+      where: {
+        userId,
+        type: 'DIARY',
+      },
+      orderBy: {
+        weekId: 'desc',
+      },
+    });
+
+    return diaries;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const getDiariesAndReflectionByUserId = async (userId: string) => {
+  try {
+    const diariesAndReflection = await prisma.conversation.findMany({
       where: {
         userId,
       },
-      // include: {
-      //   messages: true,
-      // },
+      orderBy: {
+        weekId: 'asc',
+      },
     });
 
-    return conversations;
+    return diariesAndReflection;
   } catch (error) {
     console.error(error);
     return null;
@@ -27,9 +46,6 @@ export const getConversationById = async (conversationId: string) => {
       where: {
         id: conversationId,
       },
-      // include: {
-      //   messages: true,
-      // },
     });
 
     return conversation;
@@ -50,10 +66,27 @@ export const getConversationIdByUserIdAndWeekId = async (
         userId,
         weekId,
         type,
-        semesterId,
+        semesterId: currentSemesterId,
       },
     });
     return conversation?.id;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const getUserIdByConversationId = async (conversationId: string) => {
+  try {
+    const user = await prisma.conversation.findUnique({
+      where: {
+        id: conversationId,
+      },
+      select: {
+        userId: true,
+      },
+    });
+    return user?.userId;
   } catch (error) {
     console.error(error);
     return null;
@@ -67,7 +100,7 @@ export const createConversation = async (userId: string, weekId: string, type: '
         userId,
         weekId,
         type,
-        semesterId,
+        semesterId: currentSemesterId,
       },
     });
     return newConversation;
@@ -184,6 +217,25 @@ export const getConversationSummaries = async () => {
 
     // Return the merged summaries
     return mergedSummaries;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const submitMarking = async (conversationId: string, feedback: string, grade: number) => {
+  try {
+    const submittedMarking = await prisma.conversation.update({
+      where: {
+        id: conversationId,
+      },
+      data: {
+        feedback,
+        grade,
+        markedDate: new Date(),
+      },
+    });
+    return submittedMarking;
   } catch (error) {
     console.error(error);
     return null;

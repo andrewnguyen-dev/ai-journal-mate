@@ -6,7 +6,7 @@ import { getUserByEmail } from "@/data/user";
 import { RegisterSchema } from "@/schemas";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
-import { semesterId } from "@/lib/constants";
+import { currentSemesterId } from "@/lib/constants";
 import { getUsernameFromEmail } from "@/lib/utils";
 
 export const register = async (values: any) => {
@@ -30,7 +30,7 @@ export const register = async (values: any) => {
     data: {
       email,
       password: hashedPassword,
-      semesterId,
+      semesterId: currentSemesterId,
       studentId: getUsernameFromEmail(email)
     },
   });

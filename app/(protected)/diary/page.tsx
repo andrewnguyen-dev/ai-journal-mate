@@ -1,11 +1,10 @@
 import { DiaryItem } from "@/components/diary/diary-item";
-import { getConversationsByUserId } from "@/data/conversation";
+import { getDiariesByUserId } from "@/data/conversation";
 import { getAllWeeks } from "@/data/week";
 import { currentUser } from "@/lib/auth";
 
 const Diary = async () => {
   let weeksData = await getAllWeeks();
-  console.log("🚀 ~ Diary ~ weeksData:", weeksData)
   if (!weeksData) {
     return <div className="w-full text-center">Failed to load week data</div>;
   }
@@ -18,7 +17,7 @@ const Diary = async () => {
     return <div className="w-full text-center">Failed to load user data</div>;
   }
 
-  const userConversations = await getConversationsByUserId(user.id);
+  const userConversations = await getDiariesByUserId(user.id);
 
   // Initialize gradeMap with null values for all weekIds (1 to 14)
   const gradeMap: { [weekId: string]: number | null } = {};
