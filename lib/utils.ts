@@ -22,6 +22,15 @@ export const generateRandomId = (length = 7) => {
   return result;
 }
 
+export const generateRandomPassword = (length = 12) => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+};
+
 export const handleOpenConversation = async ({ userId, weekId, type }: { userId: string, weekId: string, type: 'DIARY' | 'REFLECTION_REPORT'}) => {
   try {
     const typeUrl = type === 'DIARY' ? 'diary' : 'reflection';

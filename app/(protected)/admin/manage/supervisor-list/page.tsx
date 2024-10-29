@@ -1,3 +1,4 @@
+import AddSupervisorForm from '@/components/form/add-supervisor-form';
 import { columns } from '@/components/supervisors-data-table/columns';
 import { SupervisorsDataTable } from '@/components/supervisors-data-table/supervisors-data-table'
 import { getAllSupervisorsInSemester } from '@/data/supervisors';
@@ -13,6 +14,7 @@ const SupervisorList = async () => {
 
   return (
     <>
+      <AddSupervisorForm />
       <SupervisorsDataTable columns={columns} data={supervisors} />
     </>
   )
