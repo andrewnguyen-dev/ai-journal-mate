@@ -43,12 +43,20 @@ export function StudentsDataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 space-x-4">
         <Input
           placeholder="Filter Student ID..."
           value={(table.getColumn("studentId")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("studentId")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <Input
+          placeholder="Filter Semester ID..."
+          value={(table.getColumn("semesterId")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("semesterId")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
