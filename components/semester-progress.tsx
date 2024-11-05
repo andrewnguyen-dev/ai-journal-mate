@@ -15,7 +15,7 @@ const Step = ({ stepNumber, title, description, isLast, currentStep }: StepProps
   return (
     <div className="relative flex items-start gap-4">
       <div className="relative flex flex-col items-center">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-full text-primary-foreground ${currentStep >= stepNumber ? 'bg-primary' : 'bg-wsu-200'}`}>
+        <div className={`flex h-10 w-10 items-center justify-center rounded-full text-primary-foreground ${currentStep >= parseInt(stepNumber) ? 'bg-primary' : 'bg-wsu-200'}`}>
           {stepNumber}
         </div>
         {!isLast && (
