@@ -15,7 +15,6 @@ export const createConversationAction = async (userId: string, weekId: string, t
 
 export const saveDraftAction = async (conversationId: string, messages: Message[]) => {
   const savedDraft = await saveDraft(conversationId, messages);
-  console.log("🚀 ~ saveDraftAction ~ savedDraft:", savedDraft)
   return savedDraft;
 };
 

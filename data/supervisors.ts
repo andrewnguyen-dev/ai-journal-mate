@@ -8,7 +8,6 @@ export const getAllSupervisorsInSemester = async (semesterId: string) => {
         semesterId,
       },
     });
-
     return supervisors;
   } catch (error) {
     console.error(error);

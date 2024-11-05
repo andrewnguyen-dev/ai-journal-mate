@@ -1,4 +1,6 @@
 import prisma from '@/lib/prisma'
+import { currentSemesterId } from '@/lib/constants'
+import { getUsernameFromEmail } from '@/lib/utils'
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -54,6 +56,28 @@ export const getStudentIdByUserId = async (userId: string) => {
     })
 
     return user?.studentId;
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+export const addSupervisor = async (firstName: string, lastName: string, email: string, password: string) => {
+  try {
+    const newSupervisor = await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        studentId: getUsernameFromEmail(email),
+        email,
+        password,
+        emailVerified: new Date(),
+        role: 'SUPERVISOR',
+        semesterId: currentSemesterId,
+      },
+    })
+
+    return newSupervisor
   } catch (error) {
     console.error(error)
     return null

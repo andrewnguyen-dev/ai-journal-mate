@@ -3,7 +3,6 @@ import { columns } from '@/components/supervisors-data-table/columns';
 import { SupervisorsDataTable } from '@/components/supervisors-data-table/supervisors-data-table'
 import { getAllSupervisorsInSemester } from '@/data/supervisors';
 import { currentSemesterId } from '@/lib/constants';
-import React from 'react'
 
 const SupervisorList = async () => {
   const supervisors = await getAllSupervisorsInSemester(currentSemesterId);

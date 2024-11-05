@@ -34,7 +34,6 @@ const MarkingForm = ( { conversationId, feedback, grade }: { conversationId: str
   })
  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     try {
       await submitMarkingAction(conversationId, values.feedback, values.grade);
       toast.success("Marking submitted successfully!");

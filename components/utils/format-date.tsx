@@ -1,12 +1,12 @@
 import { Column, Row } from "@tanstack/react-table";
-import { Conversation, User } from "@prisma/client";
+import { Conversation, User, Week } from "@prisma/client";
 
 type FormatDateProps<TData> = {
   row: Row<TData>;
   column: Column<TData>;
 };
 
-export const formatDate = <TData extends Conversation | User>({
+export const formatDate = <TData extends Conversation | User | Week>({
   row,
   column,
 }: FormatDateProps<TData>) => {

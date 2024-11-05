@@ -43,6 +43,10 @@ export const columns: ColumnDef<User>[] = [
     header: "Last Name",
   },
   {
+    accessorKey: "semesterId",
+    header: "Semester ID",
+  },
+  {
     accessorKey: "lastLogin",
     header: "Last Login",
     cell: formatDate

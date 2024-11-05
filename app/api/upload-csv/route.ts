@@ -23,9 +23,10 @@ export async function POST(request: Request) {
       firstName: record['First Name'],
       lastName: record['Last Name'],
       studentId: record['Student ID'],
-      email: record['Username'] + '@student.westernsydney.edu.au', // Adjust the logic for email later
+      // TODO: Availability column
+      email: record['Student ID'] + '@student.westernsydney.edu.au', // Adjust the logic for email later
       password: "default_password", // Replace this logic appropriately for real applications
-      // semesterId: currentSemesterId
+      semesterId: currentSemesterId
     }));
 
     await prisma.user.createMany({

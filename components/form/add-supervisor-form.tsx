@@ -22,6 +22,9 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { generateRandomPassword } from "@/lib/utils";
+import toast from "react-hot-toast";
+import { addSupervisor } from "@/data/user";
+import { addSupervisorAction } from "@/actions/user";
 
 const formSchema = z.object({
   firstName: z.string().min(2).max(30),
@@ -41,8 +44,15 @@ const AddSupervisorForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await addSupervisorAction(values.firstName, values.lastName, values.email, values.password);
+      toast.success("Add new supervisor succesfully");
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add new supervisor!");
+    }
   }
 
   const handleGeneratePassword = () => {

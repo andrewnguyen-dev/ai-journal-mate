@@ -50,5 +50,9 @@ export const adminSidebarNavItems = [
   {
     title: "Student List",
     href: "/admin/manage/student-list"
+  },
+  {
+    title: "Week List",
+    href: "/admin/manage/week-list"
   }
 ]
