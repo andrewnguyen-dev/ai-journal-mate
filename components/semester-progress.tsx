@@ -1,9 +1,10 @@
 "use client";
 
 import { useCurrentWeek } from "@/hooks/use-current-week";
+import { Week } from "@prisma/client";
 
 type StepProps = {
-  stepNumber: number;
+  stepNumber: string;
   title: string;
   description: string;
   isLast: boolean;
@@ -29,29 +30,8 @@ const Step = ({ stepNumber, title, description, isLast, currentStep }: StepProps
   );
 };
 
-const SemesterProgress = () => {
-  const steps = [
-    {
-      stepNumber: 1,
-      title: "Week 1",
-      description: "Getting to know your team",
-    },
-    {
-      stepNumber: 2,
-      title: "Week 2",
-      description: "It’s a plan not a promise",
-    },
-    {
-      stepNumber: 3,
-      title: "Week 3",
-      description: "The Proposal",
-    },
-    {
-      stepNumber: 4,
-      title: "Week 4",
-      description: "Agreement and Prototype",
-    },
-  ];
+const SemesterProgress = ({steps}: {steps: Week[]}) => {
+  
 
   const currentWeek = useCurrentWeek();
   if (!currentWeek) return null;
@@ -68,7 +48,7 @@ const SemesterProgress = () => {
             {steps.map((step, index) => (
               <Step
                 key={index}
-                stepNumber={step.stepNumber}
+                stepNumber={step.id}
                 title={step.title}
                 description={step.description}
                 isLast={index === steps.length - 1}

@@ -4,6 +4,8 @@ import { User } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import ViewDiariesButton from "./view-diaries-btn"
 import { formatDate } from "../utils/format-date"
+import { ArrowUpDown } from "lucide-react"
+import { Button } from "../ui/button"
 
 export const columnsWithViewBtn: ColumnDef<User>[] = [
   {
@@ -44,7 +46,17 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "semesterId",
-    header: "Semester ID",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Semester ID
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "lastLogin",

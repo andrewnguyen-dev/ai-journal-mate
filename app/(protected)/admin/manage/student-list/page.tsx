@@ -6,7 +6,7 @@ import { currentSemesterId } from '@/lib/constants';
 import React from 'react'
 
 const StudentList = async () => {
-  const students = await getAllStudents(currentSemesterId);
+  const students = await getAllStudents();
 
   if (!students) {
     return <div className="w-full text-center">Failed to load students data</div>;

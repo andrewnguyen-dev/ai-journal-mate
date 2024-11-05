@@ -7,7 +7,8 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '@/components/ui/table';
 import {
-    ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable
+    ColumnDef, SortingState, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel,
+    getFacetedUniqueValues, getFilteredRowModel, getSortedRowModel, useReactTable
 } from '@tanstack/react-table';
 
 interface StudentsDataTableProps<TData, TValue> {
@@ -22,6 +23,7 @@ export function StudentsDataTable<TData, TValue>({
   withViewBtn = false
 }: StudentsDataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
     data,
@@ -29,9 +31,14 @@ export function StudentsDataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       columnFilters,
+      sorting
     },
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return (
