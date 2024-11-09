@@ -28,3 +28,18 @@ export const addWeek = async (weekId: string, title: string, description: string
     return null;
   }
 };
+
+export const deleteWeek = async (weekId: string) => {
+  try {
+    const deletedWeek = await prisma.week.delete({
+      where: {
+        id: weekId,
+      },
+    });
+
+    return deletedWeek;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};

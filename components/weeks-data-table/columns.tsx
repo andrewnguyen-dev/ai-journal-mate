@@ -3,6 +3,7 @@
 import { Week } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "../utils/format-date"
+import WeekDeleteCell from "./week-delete-cell"
 
 export const columns: ColumnDef<Week>[] = [
   {
@@ -26,5 +27,10 @@ export const columns: ColumnDef<Week>[] = [
     accessorKey: "toDate",
     header: "To Date",
     cell: formatDate
+  },
+  {
+    accessorKey: "delete",
+    header: "",
+    cell: WeekDeleteCell
   }
 ]

@@ -83,3 +83,18 @@ export const addSupervisor = async (firstName: string, lastName: string, email: 
     return null
   }
 }
+
+export const deleteUser = async (userId: string) => {
+  try {
+    const deletedUser = await prisma.user.delete({
+      where: {
+        id: userId,
+      },
+    })
+
+    return deletedUser
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}

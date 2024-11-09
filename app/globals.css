@@ -9,6 +9,10 @@ body,
   background-color: #f8fafc;
 }
 
+html {
+  overflow-y: scroll; /* Always show scrollbar */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

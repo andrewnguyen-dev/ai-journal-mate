@@ -8,13 +8,20 @@ import {
 } from '@/components/ui/table';
 import {
     ColumnDef, SortingState, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel,
-    getFacetedUniqueValues, getFilteredRowModel, getSortedRowModel, useReactTable
+    getFacetedUniqueValues, getFilteredRowModel, getSortedRowModel, useReactTable,
+    RowData
 } from '@tanstack/react-table';
 
 interface StudentsDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   withViewBtn?: boolean;
+}
+
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData> {
+    deleteRow: (rowIndex: number) => void
+  }
 }
 
 export function StudentsDataTable<TData, TValue>({
@@ -24,6 +31,7 @@ export function StudentsDataTable<TData, TValue>({
 }: StudentsDataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
+  const [tableData, setTableData] = useState(data)
 
   const table = useReactTable({
     data,
@@ -36,6 +44,11 @@ export function StudentsDataTable<TData, TValue>({
     state: {
       columnFilters,
       sorting
+    },
+    meta: {
+      deleteRow: rowIndex => {
+        setTableData(prev => prev.filter((_, index) => index !== rowIndex))
+      }
     },
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),

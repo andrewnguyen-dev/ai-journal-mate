@@ -6,6 +6,7 @@ import ViewDiariesButton from "./view-diaries-btn"
 import { formatDate } from "../utils/format-date"
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "../ui/button"
+import UserDeleteCell from "./user-delete-cell"
 
 export const columnsWithViewBtn: ColumnDef<User>[] = [
   {
@@ -62,5 +63,10 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "lastLogin",
     header: "Last Login",
     cell: formatDate
+  },
+  {
+    accessorKey: "delete",
+    header: "",
+    cell: UserDeleteCell
   }
 ]

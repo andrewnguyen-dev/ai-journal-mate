@@ -23,8 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { generateRandomPassword } from "@/lib/utils";
 import toast from "react-hot-toast";
-import { addSupervisor } from "@/data/user";
 import { addSupervisorAction } from "@/actions/user";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   firstName: z.string().min(2).max(30),
@@ -34,6 +34,8 @@ const formSchema = z.object({
 });
 
 const AddSupervisorForm = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,6 +51,7 @@ const AddSupervisorForm = () => {
       await addSupervisorAction(values.firstName, values.lastName, values.email, values.password);
       toast.success("Add new supervisor succesfully");
       form.reset();
+      router.refresh();
     } catch (error) {
       console.error(error);
       toast.error("Failed to add new supervisor!");

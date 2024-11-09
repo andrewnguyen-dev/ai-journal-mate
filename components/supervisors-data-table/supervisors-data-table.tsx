@@ -7,7 +7,7 @@ import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '@/components/ui/table';
 import {
-    ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable
+    ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, RowData, useReactTable
 } from '@tanstack/react-table';
 
 interface SupervisorsDataTableProps<TData, TValue> {
@@ -15,11 +15,18 @@ interface SupervisorsDataTableProps<TData, TValue> {
   data: TData[];
 }
 
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData> {
+    deleteRow: (rowIndex: number) => void
+  }
+}
+
 export function SupervisorsDataTable<TData, TValue>({
   columns,
   data,
 }: SupervisorsDataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [tableData, setTableData] = useState(data)
 
   const table = useReactTable({
     data,
@@ -29,6 +36,11 @@ export function SupervisorsDataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       columnFilters,
+    },
+    meta: {
+      deleteRow: rowIndex => {
+        setTableData(prev => prev.filter((_, index) => index !== rowIndex))
+      }
     },
   });
 

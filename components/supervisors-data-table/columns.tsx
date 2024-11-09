@@ -3,6 +3,7 @@
 import { User } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "../utils/format-date"
+import UserDeleteCell from "../students-data-table/user-delete-cell"
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -21,5 +22,10 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "lastLogin",
     header: "Last Login",
     cell: formatDate
+  },
+  {
+    accessorKey: "delete",
+    header: "",
+    cell: UserDeleteCell
   }
 ]

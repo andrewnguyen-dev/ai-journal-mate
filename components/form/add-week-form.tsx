@@ -32,6 +32,7 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 import toast from "react-hot-toast";
 import { addWeekAction } from "@/actions/week";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   weekId: z.enum([
@@ -44,6 +45,8 @@ const formSchema = z.object({
 });
 
 const AddWeekForm = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,6 +63,7 @@ const AddWeekForm = () => {
       await addWeekAction(values.weekId, values.title, values.description, values.fromDate, values.toDate);
       toast.success("Add new week succesfully");
       form.reset();
+      router.refresh();
     } catch (error) {
       console.error(error);
       toast.error("Failed to add new week!");
@@ -86,7 +90,7 @@ const AddWeekForm = () => {
                     <FormItem>
                       <FormLabel>Week ID</FormLabel>
                       <FormControl>
-                        <Input placeholder="johndoe@example.com" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormDescription>
                         Week ID should be 1-14 or 99 (for Reflection).
@@ -102,7 +106,7 @@ const AddWeekForm = () => {
                     <FormItem>
                       <FormLabel>Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="johndoe@example.com" {...field} />
+                        <Input placeholder="Week 1" {...field} />
                       </FormControl>
                       <FormDescription>
                         Title should be &quot;Week + Week ID&quot; (e.g. Week 1,
